@@ -4,40 +4,32 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 
-body {
-    margin-top: 50px;
-}
-.portfolio-item {
-    margin-bottom: 25px;
-}
-footer {
-    margin: 50px 0;
-}
-#wrapper {
-    padding-left: 0;
-}
-#page-wrapper {
-    width: 100%;
-    padding: 10px;
-    background-color: #fff;
-}
-@media(min-width:768px) {
-    #wrapper {
-        padding-left: 225px;
-    }
 
-    #page-wrapper {
-        padding: 10px;
-    }
-}
-.huge {
-    font-size: 50px;
-    line-height: normal;
-}
 
 /* Side Navigation */
 
 @media(min-width:768px) {
+    body {
+        margin-top: 50px;
+    }
+    .portfolio-item {
+        margin-bottom: 25px;
+    }
+    footer {
+        margin: 50px 0;
+    }
+    #wrapper {
+        padding-left: 0;
+    }
+    #page-wrapper {
+        width: 100%;
+        padding: 10px;
+        background-color: #fff;
+    }
+    .huge {
+        font-size: 50px;
+        line-height: normal;
+    }
     .side-nav {
         position: fixed;
         top: 51px;
@@ -60,9 +52,28 @@ footer {
         outline: none;
         background-color: #000 !important;
     }
+    #wrapper {
+        padding-left: 225px;
+        overflow-x: hidden;
+    }
+
+    #page-wrapper {
+        padding: 10px;
+    }
 }
 
 @media(max-width:768px) {
+    body {
+        margin-top: 50px;
+    }
+    .row .forum-header small{
+        font-size: 14px;
+        text-align: center;
+    }
+    .row .forum-header b {
+        font-size: 28px;
+        text-align: center;
+    }
     .side-nav {
         margin: 0;
         width: 100%;
@@ -73,79 +84,190 @@ footer {
     }
     .side-nav li a:hover,
     .side-nav li a:focus {
-        background-color: #000 !important;
+        background-color: #fff !important;
+    }
+    #forum_sidebar .side-nav{
+        display: none !important;
+    }
+    button[type=button]#button-create-post {
+        margin-right: 10px;
+    }
+    h1#header-forum>b {
+        margin-left: 10px;
     }
 }
 
 /* Header */
-
-.forum-header {
+#header-forum {
     padding-bottom: 9px;
     margin: 10px 0 0;
     border-bottom: 1px solid #eee;
 }
 
 /* Posts */
-.vote {
+.vote-icon-up {
     margin-right: auto;
     margin-left: auto;
     height: 18px;
-    width: 18px;
+    width: 13px;
     display:block;
     cursor: pointer;
 }
-.vote-icon {
-    margin-right: 10%;
-    margin-left: 10%;
+.vote-icon-down {
+    margin-right: auto;
+    margin-left: auto;
+    height: 18px;
+    width: 14px;
+    display:block;
+    cursor: pointer;
 }
 .vote-count {
     margin: 0px;
     text-align:center;
 }
-.table-filter {
+
+#partial-post {
 	background-color: #fff;
 	border-bottom: 1px solid #eee;
 }
-.table-filter tbody tr:hover {
+#partial-post tbody tr:hover {
 	cursor: pointer;
 	background-color: #eee;
 }
-.table-filter tbody tr td {
+#partial-post tbody tr td {
 	padding: 10px;
 	vertical-align: middle;
 	border-top-color: #eee;
 }
-.table-filter tbody tr td:nth-child(2) {
+#partial-post tbody tr td:nth-child(2) {
 	padding: 2px;
 	vertical-align: middle;
 	border-top-color: #eee;
 }
-.table-filter tr td:first-child {
-	width: 38px;
+#partial-post tr td:first-child {
+	width: 70px;
 }
-.table-filter tr td:nth-child(2) {
-	width: 38px;
-}
-.table-filter .media-photo {
+#partial-post .media-photo {
 	width: 35px;
 }
-.table-filter .media-meta {
-    margin-left: 5px;
+#partial-post .media-meta {
+    margin-right: 5px;
 	font-size: 11px;
 	color: #999;
 }
-.table-filter .media .title {
+#partial-post .media .title {
 	color: #2BBCDE;
 	font-size: 14px;
 	font-weight: bold;
 	line-height: normal;
 	margin: 0;
 }
-.table-filter .media span.comments-count {
+
+#partial-comment {
+	background-color: #fff;
+	border-bottom: 1px solid #eee;
+}
+#partial-comment tr td:first-child {
+	width: 36px;
+}
+#partial-comment tbody tr td {
+	padding: 10px;
+	vertical-align: top;
+	border-top-color: #eee;
+}
+#partial-comment tbody tr td:nth-child(2) {
+	padding: 2px;
+	vertical-align: middle;
+	border-top-color: #eee;
+}
+#partial-comment .media #comment-title {
+	font-size: 11px;
+	font-weight: bold;
+	line-height: normal;
+	margin-top: 5px;
+    margin-bottom: 5px;
+}
+#partial-comment .media #comment-content {
+	font-size: 14px;
+	line-height: normal;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#view-thread {
+	margin-bottom: 0;
+    background-color: rgba(0,0,0, 0.1);
+    width: 100%;
+}
+#view-thread tr td #thread-owner {
+	font-size: 11px;
+	font-weight: bold;
+	line-height: normal;
+    margin-bottom: 10px;
+}
+#view-thread tbody tr {
+    border-left-style: solid;
+    border-left-color: lightblue;
+    padding-left: 2px;
+    overflow: hidden;
+}
+#view-thread tbody tr td {
+    padding-top: 45px;
+    padding-right: 10px;
+    padding-left: 10px;
+	vertical-align: top;
+}
+#view-thread tbody tr td:nth-child(2) {
+	padding: 2px;
+	vertical-align: middle;
+}
+#view-thread tr td:first-child {
+	width: 70px;
+}
+
+.btn-reply {
+    margin-bottom: 10px;
+}
+
+#New_Topic_button{
+        width: calc(98%);
+}
+
+.pull-right {
+    width:inherit;
+}
+
+#delete_a {
     margin-top: 5px;
-    margin-left: 5px;
-    bottom: 0;
-    font-weight: bold;
-    font-size: .8em;
-	color: #5cb85c;
+    padding: 0;
+}
+
+#reply_a {
+    display: inline-block;
+    float:left;
+    border-color: none;
+    background-color: rgba(0,0,0, 0);
+    border-style: none;
+    color: #428bca;
+    margin-top: 5px;
+
+}
+    #reply_a:hover,
+    #reply_a:focus,
+    #reply_a:active
+     {
+        color: #000;
+        outline: none !important;
+    }
+#author {
+    font-size: 16px;
+}
+
+#comment {
+    display: inline-block;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 7px;
+    border-color: rgba(0,0,0, 0.05);
+    padding: 2px 8px 1px 8px;
 }

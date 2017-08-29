@@ -7,6 +7,11 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using JabberBCIT.Models;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
+using System.IO;
+using System.Web.Hosting;
+using System.Web.Configuration;
 
 namespace JabberBCIT.Controllers
 {
@@ -15,7 +20,14 @@ namespace JabberBCIT.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private UserManager _userManager;
-        private ChitterDbContext database = ChitterDbContext.dontUseThis();
+        private static string _cloudName = WebConfigurationManager.AppSettings["cloudName"];
+        private static string _apiKey = WebConfigurationManager.AppSettings["apiKey"];
+        private static string _apiSecret = WebConfigurationManager.AppSettings["apiSecret"];
+        private Cloudinary cloudinary = new Cloudinary(new Account(
+            _cloudName,
+            _apiKey,
+            _apiSecret));
+        private ChitterDbContext database = ChitterDbContext.Create;
 
         public ManageController()
         {
@@ -57,7 +69,6 @@ namespace JabberBCIT.Controllers
         {
             var user = await UserManager.FindByIdAsync(id);
             var posts = database.ForumPosts.Where(f => f.UserID == user.Id);
-
             ProfileViewModel model = new ProfileViewModel
             {
                 UserName = user.UserName,
@@ -72,29 +83,51 @@ namespace JabberBCIT.Controllers
             {
                 return View(model);
             }
-            //return view with edit button if profile viewed is same as one logged in
+            //return view with  t button if profile viewed is same as one logged in
             return View("CurrentProfile", model);
         }
 
         public async Task<ActionResult> Edit(ManageMessageId? message)
         {
-            ViewBag.StatusMessage =
+            ViewBag.StatusSuccess =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                 : message == ManageMessageId.ChangeProfileSuccess ? "Updated profile."
-                : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
+
+            ViewBag.StatusError =
+                 message == ManageMessageId.Error ? "An error has occurred."
+                 : message == ManageMessageId.UsernameError ? "That username has been already taken!"
+                 : "";
 
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             EditProfileViewModel model = new EditProfileViewModel
             {
                 ID = user.Id,
                 UserName = user.UserName,
-                ProfilePicture = user.ProfilePicture
+                ProfilePicture = user.ProfilePicture,
             };
 
             return View(model);
         }
-
+        /// <summary>
+        /// This function will upload the image to cloudinary and return the secure URI to the client 
+        /// </summary>
+        /// <param name="file"> Image file </param>
+        /// <returns></returns>
+        public string UploadImage(HttpPostedFileBase file)
+        {
+            var fileName = Path.GetFileName(file.FileName);
+            string currPath = HostingEnvironment.ApplicationPhysicalPath;
+            string imagePath = currPath + "\\Images\\" + fileName;
+            file.SaveAs(imagePath); //Save our image temporarily to our Images folder
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(imagePath)
+            };
+            var uploadResult = cloudinary.Upload(uploadParams);
+            System.IO.File.Delete(imagePath); //delete our image from Images folder after we upload 
+            return uploadResult.SecureUri.ToString(); 
+        }
         [HttpPost]
         public async Task<ActionResult> Edit(EditProfileViewModel edit)
         {
@@ -103,7 +136,21 @@ namespace JabberBCIT.Controllers
                 return View(edit);
             }
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            user.UserName = edit.UserName;
+            edit.ProfilePicture = user.ProfilePicture; 
+            if (Request.Files.Count > 0 && Request.Files[0].ContentLength > 0)
+            {
+                var file = Request.Files[0];
+                edit.ProfilePicture = UploadImage(file); 
+            }
+            // see if there is another person with the same name
+            if (database.Users.Where(u => u.UserName == edit.UserName).ToList().Any() && !(user.UserName == edit.UserName))
+            {
+                return RedirectToAction("Edit", "Manage", new { Message = ManageMessageId.UsernameError });
+            }
+            else
+            {
+                user.UserName = edit.UserName;
+            }   
             user.ProfilePicture = edit.ProfilePicture;
 
             var result = await UserManager.UpdateAsync(user);
@@ -284,7 +331,8 @@ namespace JabberBCIT.Controllers
                 }
                 AddErrors(result);
             }
-            return RedirectToAction("Edit");
+            ViewBag.currentPasswordError = "Invalid current password!";
+            return View();
         }
 
         //
@@ -425,7 +473,8 @@ namespace JabberBCIT.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
-            Error
+            Error,
+            UsernameError
         }
 
         #endregion
